@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
   final primaryBlue = const Color(0xFF29ABE2);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    // Commit 4: Implemented AppBar, Search Bar, and Promotional Banner.
     return Scaffold(
       backgroundColor: Colors.grey[50], 
       appBar: AppBar(
