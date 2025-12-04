@@ -117,7 +117,7 @@ class HomeScreen extends StatelessWidget {
               // Popular Products Grid
               Text("Popular Products", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
               const SizedBox(height: 15),
-              GridView.builder(
+              GridView.builder(   // Commit 5: Added product category list and main product grid display.
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
