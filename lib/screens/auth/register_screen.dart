@@ -7,6 +7,7 @@ class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
   final primaryBlue = const Color(0xFF29ABE2);
 
+// Commit 2: Added all register input fields (Name, Email, Phone, Pass).
   @override
   Widget build(BuildContext context) {
     return Scaffold(
