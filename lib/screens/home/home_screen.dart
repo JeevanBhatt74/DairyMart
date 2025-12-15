@@ -1,26 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
-  final primaryBlue = const Color(0xFF29ABE2);
 
   @override
-  Widget build(BuildContext context) {    // Commit 4: Implemented AppBar, Search Bar, and Promotional Banner.
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final primaryBlue = const Color(0xFF29ABE2);
+  int _selectedIndex = 0; // Tracks which tab is active
+
+  // Handles tab clicks
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50], 
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
         elevation: 0,
         title: Row(
           children: [
-            // Small Logo Icon container
             Container(
               padding: const EdgeInsets.all(8),
-              // FIXED: Replaced withOpacity with withValues
               decoration: BoxDecoration(
-                color: primaryBlue.withValues(alpha: 0.1), 
+                color: primaryBlue.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.storefront, color: primaryBlue, size: 20),
@@ -34,6 +46,8 @@ class HomeScreen extends StatelessWidget {
           IconButton(icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87), onPressed: () {}),
         ],
       ),
+      // We will simply switch the body content based on the index later. 
+      // For now, we keep the main dashboard visible.
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -42,16 +56,11 @@ class HomeScreen extends StatelessWidget {
             children: [
               // Search Bar
               Container(
-                // FIXED: Replaced withOpacity with withValues
                 decoration: BoxDecoration(
-                  color: Colors.white, 
-                  borderRadius: BorderRadius.circular(15), 
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(15),
                   boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withValues(alpha: 0.1), 
-                      blurRadius: 10, 
-                      offset: const Offset(0, 5)
-                    )
+                    BoxShadow(color: Colors.grey.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5))
                   ]
                 ),
                 child: TextField(
@@ -66,13 +75,13 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 25),
 
-              // Banner Section with Blue Gradient
+              // Banner
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [primaryBlue, const Color(0xFF63C6F7)], // Blue gradient
+                    colors: [primaryBlue, const Color(0xFF63C6F7)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -86,8 +95,7 @@ class HomeScreen extends StatelessWidget {
                         children: [
                           Text("Fresh Morning!", style: GoogleFonts.poppins(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
                           const SizedBox(height: 5),
-                          // FIXED: Replaced withOpacity with withValues
-                          Text("Get 20% off on your first order of fresh milk.", style: GoogleFonts.poppins(color: Colors.white.withValues(alpha: 0.9))),
+                          Text("Get 20% off on your first order of fresh milk.", style: GoogleFonts.poppins(color: Colors.white.withOpacity(0.9))),
                         ],
                       ),
                     ),
@@ -114,10 +122,10 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 25),
 
-              // Popular Products Grid
+              // Products Grid
               Text("Popular Products", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)),
               const SizedBox(height: 15),
-              GridView.builder(   // Commit 5: Added product category list and main product grid display.
+              GridView.builder(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -130,24 +138,16 @@ class HomeScreen extends StatelessWidget {
                 itemBuilder: (context, index) {
                   return Container(
                     padding: const EdgeInsets.all(12),
-                    // FIXED: Replaced withOpacity with withValues
                     decoration: BoxDecoration(
-                      color: Colors.white, 
-                      borderRadius: BorderRadius.circular(15), 
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.05), 
-                          blurRadius: 10
-                        )
-                      ]
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [BoxShadow(color: Colors.grey.withOpacity(0.05), blurRadius: 10)]
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Center(
-                            child: Icon(Icons.image_not_supported_outlined, size: 60, color: Colors.grey[300]), // Placeholder
-                          ),
+                          child: Center(child: Icon(Icons.image_not_supported_outlined, size: 60, color: Colors.grey[300])),
                         ),
                         const SizedBox(height: 10),
                         Text("Fresh Milk 1L", style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 16)),
@@ -178,6 +178,8 @@ class HomeScreen extends StatelessWidget {
         selectedItemColor: primaryBlue,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
+        currentIndex: _selectedIndex, // UPDATED: Connected to state
+        onTap: _onItemTapped,         // UPDATED: Connected to handler
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.favorite_border), label: "Favorites"),
@@ -195,9 +197,8 @@ class HomeScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(15),
-            // FIXED: Replaced withOpacity with withValues
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.1), 
+              color: color.withOpacity(0.1),
               borderRadius: BorderRadius.circular(15)
             ),
             child: Icon(icon, color: color, size: 28),
