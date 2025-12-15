@@ -38,7 +38,12 @@ flutter:
 
 # --- APP ICON CONFIGURATION ---
 flutter_launcher_icons:
-  android: true
+  android: "launcher_icon"
   ios: true
-  image_path: "assets/images/app_icon.png"
-  min_sdk_android: 21 # Optional: ensures support for newer adaptive icons
+  # 1. This ensures the background fills the entire circle
+  adaptive_icon_background: "#E6E7E8" 
+  # 2. This places your logo on top
+  adaptive_icon_foreground: "assets/images/logo.png"
+  # 3. Fallback for older devices
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21
