@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
 
   // --- Theme Colors ---
   final primaryBlue = const Color(0xFF29ABE2);
-  final backgroundGray = const Color(0xFFE6E7E8); 
+  final backgroundGray = const Color.fromARGB(255, 255, 255, 255); 
   final circleColor = Colors.white; 
 
   @override
