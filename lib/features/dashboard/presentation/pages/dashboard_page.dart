@@ -1,32 +1,39 @@
+// Main dashboard with bottom navigation
+import 'package:dairymart/features/favorites/presentation/pages/favorites_screen.dart';
+import 'package:dairymart/features/orders/presentation/pages/orders_screen.dart';
+import 'package:dairymart/features/profile/presentation/pages/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// --- IMPORT THE SEPARATE FILES ---
-import '../favorites/favorites_screen.dart';
-import '../orders/orders_screen.dart';
-import '../profile/profile_screen.dart';
+// --- IMPORTS FOR OTHER TABS ---
+// We link these to your Clean Architecture pages
+import '../../../../features/favorites/presentation/pages/favorites_screen.dart';
+import '../../../../features/orders/presentation/pages/orders_screen.dart';
+import '../../../../features/profile/presentation/pages/profile_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+// --- 1. MAIN DASHBOARD (Holds Bottom Nav) ---
+class DashboardPage extends StatefulWidget {
+  const DashboardPage({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashboardPageState extends State<DashboardPage> {
   final primaryBlue = const Color(0xFF29ABE2);
   int _selectedIndex = 0;
 
+  // Define the pages for the bottom navigation
   late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     _pages = [
-      const HomeContent(),
-      const FavoritesScreen(),
-      const OrdersScreen(),
-      const ProfileScreen(),
+      const HomeView(),       // Your Custom Home Content
+      const FavoritesScreen(),  // Clean Arch Favorites Page
+      const OrdersScreen(),     // Clean Arch Orders Page
+      const ProfileScreen(),    // Clean Arch Profile Page
     ];
   }
 
@@ -40,17 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: IndexedStack(
-          index: _selectedIndex,
-          children: _pages,
-        ),
+      // IndexedStack keeps the state of pages alive (so scroll position saves)
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
         selectedItemColor: primaryBlue,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
+        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600),
+        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const [
@@ -64,9 +73,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// --- DASHBOARD CONTENT WIDGET ---
-class HomeContent extends StatelessWidget {
-  const HomeContent({super.key});
+// --- 2. HOME VIEW (Your Exact Previous Design) ---
+class HomeView extends StatelessWidget {
+  const HomeView({super.key});
+  
   final primaryBlue = const Color(0xFF29ABE2);
 
   // --- GENUINE NEPALI DAIRY DATA ---
@@ -93,7 +103,7 @@ class HomeContent extends StatelessWidget {
       name: "Juju Dhau",
       brand: "Bhaktapur Local",
       price: "Rs. 350",
-      image: "assets/images/Juju-Dhau.jpg",
+      image: "assets/images/Juju-Dhau.jpg", // Make sure this file exists!
     ),
     Product(
       name: "Amul Butter",
@@ -105,104 +115,111 @@ class HomeContent extends StatelessWidget {
       name: "Paneer",
       brand: "ND's Organic",
       price: "Rs. 850/kg",
-      image: "assets/images/Paneer.jpg",
+      image: "assets/images/Paneer.jpg", // Make sure this file exists!
     ),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: Row(
-          children: [
-            // --- BRAND LOGO (No Background) ---
-            SizedBox(
-              height: 100,
-              width: 100,
-              child: Image.asset(
-                "assets/images/logo.png",
-                fit: BoxFit.contain, //Ensures full logo is seen
-                errorBuilder: (context, error, stackTrace) =>
-                    Icon(Icons.storefront, color: primaryBlue, size: 30),
+    // Note: We use a SafeArea here directly instead of another Scaffold
+    // to avoid "nested scaffold" issues.
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.grey[50],
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Row(
+            children: [
+              // --- BRAND LOGO ---
+              SizedBox(
+                height: 40,
+                width: 40,
+                child: Image.asset(
+                  "assets/images/logo.png",
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      Icon(Icons.storefront, color: primaryBlue, size: 30),
+                ),
               ),
+              const SizedBox(width: 12),
+              Text(
+                "DairyMart",
+                style: GoogleFonts.poppins(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20
+                )
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_none_rounded, color: Colors.black87),
+              onPressed: () {}
             ),
-            const SizedBox(width: 12),
-            Text(
-              "DairyMart",
-              style: GoogleFonts.poppins(
-                color: Colors.black87,
-                fontWeight: FontWeight.bold,
-                fontSize: 20
-              )
+            IconButton(
+              icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87),
+              onPressed: () {}
             ),
           ],
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_none_rounded, color: Colors.black87),
-            onPressed: () {}
-          ),
-          IconButton(
-            icon: const Icon(Icons.shopping_bag_outlined, color: Colors.black87),
-            onPressed: () {}
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const HomeSearchBar(),
-              const SizedBox(height: 25),
-              PromoBanner(primaryBlue: primaryBlue),
-              const SizedBox(height: 25),
-              Text(
-                "Categories",
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)
-              ),
-              const SizedBox(height: 15),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    CategoryItem(title: "Milk", icon: Icons.water_drop, color: primaryBlue),
-                    const CategoryItem(title: "Cheese", icon: Icons.circle_outlined, color: Colors.orange),
-                    CategoryItem(title: "Butter", icon: Icons.breakfast_dining, color: Colors.yellow[700]!),
-                    const CategoryItem(title: "Yogurt", icon: Icons.icecream_outlined, color: Colors.pink),
-                    const CategoryItem(title: "Cream", icon: Icons.cake_outlined, color: Colors.purpleAccent),
-                  ],
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const HomeSearchBar(),
+                const SizedBox(height: 25),
+                PromoBanner(primaryBlue: primaryBlue),
+                const SizedBox(height: 25),
+                Text(
+                  "Categories",
+                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)
                 ),
-              ),
-              const SizedBox(height: 25),
-              Text(
-                "Popular Products",
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)
-              ),
-              const SizedBox(height: 15),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.75,
-                  crossAxisSpacing: 15,
-                  mainAxisSpacing: 15,
+                const SizedBox(height: 15),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      CategoryItem(title: "Milk", icon: Icons.water_drop, color: primaryBlue),
+                      const CategoryItem(title: "Cheese", icon: Icons.circle_outlined, color: Colors.orange),
+                      CategoryItem(title: "Butter", icon: Icons.breakfast_dining, color: Colors.yellow[700]!),
+                      const CategoryItem(title: "Yogurt", icon: Icons.icecream_outlined, color: Colors.pink),
+                      const CategoryItem(title: "Cream", icon: Icons.cake_outlined, color: Colors.purpleAccent),
+                    ],
+                  ),
                 ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  return ProductCard(
-                    primaryBlue: primaryBlue,
-                    product: products[index],
-                  );
-                },
-              ),
-            ],
+                const SizedBox(height: 25),
+                Text(
+                  "Popular Products",
+                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black87)
+                ),
+                const SizedBox(height: 15),
+                
+                // Using GridView with physics since it's inside SingleChildScrollView
+                GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    childAspectRatio: 0.75,
+                    crossAxisSpacing: 15,
+                    mainAxisSpacing: 15,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    return ProductCard(
+                      primaryBlue: primaryBlue,
+                      product: products[index],
+                    );
+                  },
+                ),
+                const SizedBox(height: 20), // Bottom padding
+              ],
+            ),
           ),
         ),
       ),
@@ -210,7 +227,7 @@ class HomeContent extends StatelessWidget {
   }
 }
 
-// --- DATA MODEL ---
+// --- 3. DATA MODEL ---
 class Product {
   final String name;
   final String brand;
@@ -220,7 +237,8 @@ class Product {
   Product({required this.name, required this.brand, required this.price, required this.image});
 }
 
-// --- SMART PRODUCT CARD ---
+// --- 4. WIDGETS ---
+
 class ProductCard extends StatelessWidget {
   final Color primaryBlue;
   final Product product;
@@ -294,7 +312,6 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-// --- OTHER WIDGETS ---
 class PromoBanner extends StatelessWidget {
   final Color primaryBlue;
   const PromoBanner({super.key, required this.primaryBlue});

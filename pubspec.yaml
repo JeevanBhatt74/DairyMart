@@ -11,22 +11,39 @@ dependencies:
   flutter:
     sdk: flutter
   
-  # Icons
+  # --- Icons ---
   cupertino_icons: ^1.0.8
   
-  # Typography & UI
+  # --- Typography & UI ---
   google_fonts: ^6.1.0
   smooth_page_indicator: ^1.1.0
 
+  # --- State Management (NEW) ---
+  flutter_riverpod: ^2.6.1
+
+  # --- Local Database (NEW) ---
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # --- Utilities (NEW) ---
+  path_provider: ^2.1.2    # Required for Hive to find storage path
+  dartz: ^0.10.1           # functional programming (Either<Left, Right>)
+  equatable: ^2.0.5        # Value equality for easy comparisons
+  uuid: ^4.3.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
   
-  # Linting
+  # --- Linting ---
   flutter_lints: ^3.0.0
   
-  # App Icon Generator
+  # --- App Icon Generator ---
   flutter_launcher_icons: ^0.13.1
+
+  # --- Code Generation (NEW) ---
+  # These are needed to generate the .g.dart files for Hive Adapters
+  build_runner: ^2.4.8
+  hive_generator: ^2.0.1
 
 # --- FLUTTER CONFIGURATION ---
 flutter:
