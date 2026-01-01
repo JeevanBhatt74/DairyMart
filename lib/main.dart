@@ -1,25 +1,10 @@
-// lib/main.dart
 import 'package:flutter/material.dart';
-import 'screens/splash/splash_screen.dart';
-import 'config/app_theme.dart'; 
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'app/app.dart';
+import 'core/services/hive/hive_service.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'DairyMart',
-      
-      // Use the theme defined in lib/config/app_theme.dart
-      theme: AppTheme.lightTheme, 
-      
-      home: const SplashScreen(),
-    );
-  }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await HiveService().init();
+  runApp(const ProviderScope(child: App()));
 }
