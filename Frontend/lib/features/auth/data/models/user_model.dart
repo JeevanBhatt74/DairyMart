@@ -7,14 +7,19 @@ part 'user_model.g.dart';
 
 @HiveType(typeId: 0)
 class UserModel extends UserEntity {
+  @override
   @HiveField(0)
   final String userId;
+  @override
   @HiveField(1)
   final String fullName;
+  @override
   @HiveField(2)
   final String email;
+  @override
   @HiveField(3)
   final String password;
+  @override
   @HiveField(4)
   final String phone;
 

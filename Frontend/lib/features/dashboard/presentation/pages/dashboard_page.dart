@@ -7,9 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 // --- IMPORTS FOR OTHER TABS ---
 // We link these to your Clean Architecture pages
-import '../../../../features/favorites/presentation/pages/favorites_screen.dart';
-import '../../../../features/orders/presentation/pages/orders_screen.dart';
-import '../../../../features/profile/presentation/pages/profile_screen.dart';
 
 // --- 1. MAIN DASHBOARD (Holds Bottom Nav) ---
 class DashboardPage extends StatefulWidget {

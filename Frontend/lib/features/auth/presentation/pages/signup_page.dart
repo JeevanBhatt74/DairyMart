@@ -34,7 +34,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   @override
   Widget build(BuildContext context) {
     final isLoading = ref.watch(authViewModelProvider);
-    final primaryColor = const Color(0xFF29ABE2);
+    const primaryColor = Color(0xFF29ABE2);
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -110,7 +110,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 
                 // --- SIGN UP BUTTON ---
                 isLoading 
-                  ? Center(child: CircularProgressIndicator(color: primaryColor))
+                  ? const Center(child: CircularProgressIndicator(color: primaryColor))
                   : SizedBox(
                       height: 58,
                       child: ElevatedButton(

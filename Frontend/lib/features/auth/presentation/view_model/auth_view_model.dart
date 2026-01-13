@@ -7,7 +7,6 @@ import '../../domain/use_cases/login_usecase.dart';
 import '../../domain/use_cases/signup_usecase.dart';
 import '../../data/data_sources/auth_local_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
-import '../pages/login_page.dart';
 import '../../../dashboard/presentation/pages/dashboard_page.dart';
 
 // --- DEPENDENCY INJECTION ---
@@ -36,9 +35,19 @@ class AuthViewModel extends StateNotifier<bool> {
     state = false; // Done
     
     result.fold(
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(failure.message))),
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(failure.message),
+          backgroundColor: Colors.red, // Added red color for errors here too
+        )
+      ),
       (success) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Registered Successfully! Login now.")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Registered Successfully! Login now."),
+            backgroundColor: Colors.green, // Green for success
+          )
+        );
         Navigator.pop(context); // Go back to login
       },
     );
@@ -50,9 +59,18 @@ class AuthViewModel extends StateNotifier<bool> {
     state = false;
 
     result.fold(
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(failure.message))),
+      (failure) => ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(failure.message),
+          // FIXED: Use 'backgroundColor' instead of 'style'
+          backgroundColor: Colors.red, 
+        )
+      ),
       (success) {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const DashboardPage()));
+        Navigator.pushReplacement(
+          context, 
+          MaterialPageRoute(builder: (context) => const DashboardPage())
+        );
       },
     );
   }
