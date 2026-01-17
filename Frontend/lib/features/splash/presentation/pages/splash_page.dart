@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+// Import your pages and provider
+import '../../../../core/providers/shared_preferences_provider.dart';
+import '../../../../core/services/storage/user_session_service.dart';
+import '../../../../features/auth/presentation/pages/login_page.dart';
+import '../../../../features/dashboard/presentation/pages/dashboard_page.dart';
 import '../../../../features/onboarding/presentation/pages/onboarding_page.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({super.key});
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  ConsumerState<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
+class _SplashPageState extends ConsumerState<SplashPage> with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -39,15 +46,47 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     );
 
     _controller.forward();
-    _navigateToNext();
+    
+    // Call our new check function instead of just navigating
+    _checkStatus();
   }
 
-  _navigateToNext() async {
+  // --- NEW LOGIC HERE ---
+  void _checkStatus() async {
+    // 1. Wait for your animation to finish (3.5 seconds)
     await Future.delayed(const Duration(milliseconds: 3500));
-    if (mounted) {
+
+    if (!mounted) return;
+
+    // 2. Check if onboarding is completed
+    final prefs = ref.read(sharedPreferencesProvider);
+    final isOnboardingCompleted = prefs.getBool('is_onboarding_completed') ?? false;
+
+    // 3. If onboarding NOT completed, show onboarding screens
+    if (!isOnboardingCompleted) {
       Navigator.pushReplacement(
         context, 
         MaterialPageRoute(builder: (context) => const OnboardingPage())
+      );
+      return;
+    }
+
+    // 4. Onboarding is done, check if user is logged in
+    final sessionService = UserSessionService();
+    final token = await sessionService.getToken();
+    print('🔍 DEBUG: Token from storage = $token'); // Debug log
+    final isLoggedIn = token != null && token.isNotEmpty;
+
+    // 5. If logged in, go to Dashboard; otherwise go to LoginPage
+    if (isLoggedIn) {
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(builder: (context) => const DashboardPage())
+      );
+    } else {
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(builder: (context) => const LoginPage())
       );
     }
   }
@@ -119,7 +158,6 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
             ),
             const SizedBox(height: 60),
             
-            // --- ADDED THIS TO FIX THE TEST FAILURE ---
             FadeTransition(
               opacity: _fadeAnimation,
               child: CircularProgressIndicator(

@@ -16,17 +16,31 @@ class _SignupPageState extends ConsumerState<SignupPage> {
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _addressController = TextEditingController();
+  
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _phoneController.dispose();
+    _passwordController.dispose();
+    _addressController.dispose();
+    super.dispose();
+  }
 
   void _onSignup() {
     if (_formKey.currentState!.validate()) {
       final user = UserEntity(
-        userId: "",
+        userId: "", 
         fullName: _nameController.text.trim(),
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         phone: _phoneController.text.trim(),
+        address: _addressController.text.trim(),
       );
+      
       ref.read(authViewModelProvider.notifier).registerUser(user, context);
     }
   }
@@ -60,55 +74,23 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 10),
-                Text(
-                  "Let's Get Started!",
-                  style: GoogleFonts.poppins(
-                    fontSize: 26, 
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFF2D2D2D),
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+                Text("Let's Get Started!", style: GoogleFonts.poppins(fontSize: 26, fontWeight: FontWeight.bold, color: const Color(0xFF2D2D2D)), textAlign: TextAlign.center),
                 const SizedBox(height: 8),
-                Text(
-                  "Create an account to get all features",
-                  style: GoogleFonts.poppins(fontSize: 15, color: Colors.grey[600]),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 40),
+                Text("Create an account to get all features", style: GoogleFonts.poppins(fontSize: 15, color: Colors.grey[600]), textAlign: TextAlign.center),
+                const SizedBox(height: 30),
                 
-                // --- INPUT FIELDS WITH BORDERS ---
-                _buildOutlinedTextField(
-                  controller: _nameController, 
-                  label: "Full Name", 
-                  icon: Icons.person_outline
-                ),
-                const SizedBox(height: 20),
-                
-                _buildOutlinedTextField(
-                  controller: _emailController, 
-                  label: "Email Address", 
-                  icon: Icons.email_outlined
-                ),
-                const SizedBox(height: 20),
-                
-                _buildOutlinedTextField(
-                  controller: _phoneController, 
-                  label: "Phone Number", 
-                  icon: Icons.phone_android
-                ),
-                const SizedBox(height: 20),
-                
-                _buildOutlinedTextField(
-                  controller: _passwordController, 
-                  label: "Password", 
-                  icon: Icons.lock_outline, 
-                  isPassword: true
-                ),
+                _buildOutlinedTextField(controller: _nameController, label: "Full Name", icon: Icons.person_outline),
+                const SizedBox(height: 16),
+                _buildOutlinedTextField(controller: _emailController, label: "Email Address", icon: Icons.email_outlined),
+                const SizedBox(height: 16),
+                _buildOutlinedTextField(controller: _phoneController, label: "Phone Number", icon: Icons.phone_android),
+                const SizedBox(height: 16),
+                _buildOutlinedTextField(controller: _addressController, label: "Delivery Address", icon: Icons.location_on_outlined),
+                const SizedBox(height: 16),
+                _buildOutlinedTextField(controller: _passwordController, label: "Password", icon: Icons.lock_outline, isPassword: true),
                 
                 const SizedBox(height: 40),
                 
-                // --- SIGN UP BUTTON ---
                 isLoading 
                   ? const Center(child: CircularProgressIndicator(color: primaryColor))
                   : SizedBox(
@@ -122,26 +104,18 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                           shadowColor: primaryColor.withOpacity(0.4),
                         ),
                         onPressed: _onSignup,
-                        child: Text(
-                          "SIGN UP",
-                          style: GoogleFonts.poppins(fontSize: 17, fontWeight: FontWeight.bold),
-                        ),
+                        child: Text("SIGN UP", style: GoogleFonts.poppins(fontSize: 17, fontWeight: FontWeight.bold)),
                       ),
                     ),
                 
                 const SizedBox(height: 25),
-                
-                // --- LOGIN LINK ---
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Already have an account? ", style: GoogleFonts.poppins(color: Colors.grey[700], fontSize: 15)),
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: Text(
-                        "Login",
-                        style: GoogleFonts.poppins(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 15),
-                      ),
+                      child: Text("Login", style: GoogleFonts.poppins(color: primaryColor, fontWeight: FontWeight.bold, fontSize: 15)),
                     ),
                   ],
                 ),
@@ -154,13 +128,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
     );
   }
 
-  // --- REUSABLE OUTLINED TEXT FIELD ---
-  Widget _buildOutlinedTextField({
-    required TextEditingController controller, 
-    required String label, 
-    required IconData icon, 
-    bool isPassword = false
-  }) {
+  Widget _buildOutlinedTextField({required TextEditingController controller, required String label, required IconData icon, bool isPassword = false, String? hint}) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
@@ -168,33 +136,16 @@ class _SignupPageState extends ConsumerState<SignupPage> {
       style: GoogleFonts.poppins(fontSize: 15, color: Colors.black87),
       decoration: InputDecoration(
         labelText: label,
+        hintText: hint,
         labelStyle: GoogleFonts.poppins(color: Colors.grey[600]),
         prefixIcon: Icon(icon, color: Colors.grey[500], size: 22),
         filled: true,
-        fillColor: Colors.grey[50], // Very subtle background
+        fillColor: Colors.grey[50],
         contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 20),
-        
-        // DEFAULT BORDER (Grey)
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-        ),
-        
-        // FOCUSED BORDER (Blue)
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFF29ABE2), width: 2),
-        ),
-        
-        // ERROR BORDER (Red)
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 1),
-        ),
-        focusedErrorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Colors.redAccent, width: 2),
-        ),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300, width: 1)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Color(0xFF29ABE2), width: 2)),
+        errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.redAccent, width: 1)),
+        focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: Colors.redAccent, width: 2)),
       ),
     );
   }

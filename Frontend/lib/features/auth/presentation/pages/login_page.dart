@@ -16,6 +16,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  // This function connects the UI to your Clean Architecture Logic
   void _onLogin() {
     if (_formKey.currentState!.validate()) {
       ref.read(authViewModelProvider.notifier).loginUser(
@@ -43,6 +44,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
+                  // Logo
                   Image.asset('assets/images/logo.png', height: 100),
                   const SizedBox(height: 25),
                   
@@ -59,7 +61,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Outlined Email Field
+                  // Email
                   _buildOutlinedTextField(
                     controller: _emailController,
                     label: "Email Address",
@@ -67,7 +69,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Outlined Password Field
+                  // Password
                   _buildOutlinedTextField(
                     controller: _passwordController,
                     label: "Password",
@@ -107,6 +109,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   
                   const SizedBox(height: 30),
 
+                  // Sign Up Link
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

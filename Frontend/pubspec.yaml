@@ -10,40 +10,54 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+
   # --- Icons ---
   cupertino_icons: ^1.0.8
-  
+
   # --- Typography & UI ---
   google_fonts: ^6.1.0
   smooth_page_indicator: ^1.1.0
 
-  # --- State Management (NEW) ---
+  # --- State Management ---
   flutter_riverpod: ^2.6.1
 
-  # --- Local Database (NEW) ---
+  # --- Networking (REQUIRED FOR BACKEND) ---
+  dio: ^5.4.0
+
+  intl_phone_field: ^3.2.0
+
+  # --- Data Modeling (REQUIRED FOR JSON) ---
+  json_annotation: ^4.9.0
+
+  # --- Local Database (HIVE ADDED BACK) ---
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  
-  # --- Utilities (NEW) ---
-  path_provider: ^2.1.2    # Required for Hive to find storage path
-  dartz: ^0.10.1           # functional programming (Either<Left, Right>)
-  equatable: ^2.0.5        # Value equality for easy comparisons
+
+  # --- Utilities ---
+  path_provider: ^2.1.2
+  dartz: ^0.10.1
+  equatable: ^2.0.5
   uuid: ^4.3.3
+  shared_preferences: ^2.5.4
+  dio_smart_retry: ^7.0.1
+  flutter_secure_storage: ^10.0.0
+  pretty_dio_logger: ^1.4.0
+  connectivity_plus: ^6.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
+
   # --- Linting ---
   flutter_lints: ^3.0.0
-  
+
   # --- App Icon Generator ---
   flutter_launcher_icons: ^0.13.1
 
-  # --- Code Generation (NEW) ---
-  # These are needed to generate the .g.dart files for Hive Adapters
+  # --- Code Generation ---
   build_runner: ^2.4.8
-  hive_generator: ^2.0.1
+  json_serializable: ^6.7.1 # Required for JSON
+  hive_generator: ^2.0.1    # Required for Hive Adapters
 
 # --- FLUTTER CONFIGURATION ---
 flutter:
@@ -57,10 +71,7 @@ flutter:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  # 1. This ensures the background fills the entire circle
-  adaptive_icon_background: "#E6E7E8" 
-  # 2. This places your logo on top
+  adaptive_icon_background: "#E6E7E8"
   adaptive_icon_foreground: "assets/images/logo.png"
-  # 3. Fallback for older devices
   image_path: "assets/images/logo.png"
   min_sdk_android: 21

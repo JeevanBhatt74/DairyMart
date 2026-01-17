@@ -1,42 +1,41 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/onboarding_content.dart';
+import '../../../../core/providers/shared_preferences_provider.dart'; // Import provider
 import '../../../../features/auth/presentation/pages/login_page.dart';
+import '../widgets/onboarding_content.dart';
 
-class OnboardingPage extends StatefulWidget {
+class OnboardingPage extends ConsumerStatefulWidget {
   const OnboardingPage({super.key});
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
+  ConsumerState<OnboardingPage> createState() => _OnboardingPageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage> {
+class _OnboardingPageState extends ConsumerState<OnboardingPage> {
   final PageController _controller = PageController();
   bool isLastPage = false;
 
   final List<Map<String, String>> _pages = [
-    {
-      "image": "assets/images/milk.jpg", 
-      "title": "Fresh from Farm",
-      "desc": "Get fresh milk delivered directly from local farmers to your doorstep every morning."
-    },
-    {
-      "image": "assets/images/cheese.png", 
-      "title": "Organic Products",
-      "desc": "Enjoy 100% organic dairy products like Cheese, Paneer, and Ghee without preservatives."
-    },
-    {
-      "image": "assets/images/butter.jpg", 
-      "title": "Fast Delivery",
-      "desc": "We ensure delivery within 24 hours of milking to guarantee the best quality."
-    },
-    {
-      "image": "assets/images/ghee.png", 
-      "title": "Pure & Healthy",
-      "desc": "Experience the rich taste and health benefits of our traditional, pure ghee."
-    },
+    { "image": "assets/images/milk.jpg", "title": "Fresh from Farm", "desc": "Get fresh milk delivered directly from local farmers." },
+    { "image": "assets/images/cheese.png", "title": "Organic Products", "desc": "Enjoy 100% organic dairy products without preservatives." },
+    { "image": "assets/images/butter.jpg", "title": "Fast Delivery", "desc": "We ensure delivery within 24 hours of milking." },
   ];
+
+  // --- NEW FUNCTION TO SAVE FLAG ---
+  void _completeOnboarding() async {
+    final prefs = ref.read(sharedPreferencesProvider);
+    // This saves "true" to disk
+    await prefs.setBool('is_onboarding_completed', true);
+
+    if (mounted) {
+      Navigator.pushReplacement(
+        context, 
+        MaterialPageRoute(builder: (context) => const LoginPage())
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +46,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // --- CAROUSEL CONTENT ---
+            // CAROUSEL
             Positioned.fill(
-              bottom: 100, // Leave space for bottom controls
+              bottom: 100,
               child: PageView.builder(
                 controller: _controller,
                 onPageChanged: (index) => setState(() => isLastPage = index == _pages.length - 1),
@@ -62,7 +61,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ),
 
-            // --- BOTTOM CONTROLS (Floating Effect) ---
+            // BOTTOM CONTROLS
             Positioned(
               bottom: 40,
               left: 30,
@@ -70,59 +69,29 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // 1. DYNAMIC DOTS INDICATOR
                   SmoothPageIndicator(
                     controller: _controller,
                     count: _pages.length,
-                    effect: ExpandingDotsEffect(
-                      activeDotColor: primaryBlue,
-                      dotColor: Colors.grey.shade300,
-                      dotHeight: 8,
-                      dotWidth: 8,
-                      expansionFactor: 3, // Wide pill effect for active dot
-                      spacing: 8,
-                    ),
+                    effect: const ExpandingDotsEffect(activeDotColor: primaryBlue, dotHeight: 8, dotWidth: 8),
                   ),
-
-                  // 2. MODERN FLOATING BUTTON
+                  
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-                      elevation: 8, // Nice shadow depth
-                      shadowColor: primaryBlue.withOpacity(0.5), // Colored shadow
-                      shape: const StadiumBorder(), // Pill shape
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15)
                     ),
                     onPressed: () {
                       if (isLastPage) {
-                        Navigator.pushReplacement(
-                          context, 
-                          MaterialPageRoute(builder: (context) => const LoginPage())
-                        );
+                        // --- CALL THE SAVE FUNCTION HERE ---
+                        _completeOnboarding();
                       } else {
-                        _controller.nextPage(
-                          duration: const Duration(milliseconds: 400), 
-                          curve: Curves.easeInOut
-                        );
+                        _controller.nextPage(duration: const Duration(milliseconds: 300), curve: Curves.ease);
                       }
                     },
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          isLastPage ? "Get Started" : "Next",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16, 
-                            fontWeight: FontWeight.w600
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Icon(
-                          isLastPage ? Icons.check_circle_outline : Icons.arrow_forward_rounded,
-                          size: 20,
-                        ),
-                      ],
+                    child: Text(
+                      isLastPage ? "Get Started" : "Next",
+                      style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ],

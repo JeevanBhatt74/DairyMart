@@ -6,20 +6,20 @@ class AuthLocalDataSource {
   
   AuthLocalDataSource(this.hive);
 
-  Future<void> registerUser(UserModel user) async {
+  // 1. THIS METHOD MUST BE NAMED 'saveUser'
+  Future<void> saveUser(UserModel user) async {
     var box = await hive.openBox<UserModel>('users');
-    await box.put(user.userId, user);
+    await box.clear(); // Clear old data to keep only the current user
+    await box.put('currentUser', user); 
   }
 
   Future<bool> loginUser(String email, String password) async {
     var box = await hive.openBox<UserModel>('users');
-    try {
-      final user = box.values.firstWhere(
-        (element) => element.email == email && element.password == password
-      );
-      return true;
-    } catch (e) {
-      return false;
+    // For local login (offline), we just check if the stored user matches
+    if (box.isNotEmpty) {
+      final storedUser = box.get('currentUser');
+      return storedUser != null && storedUser.email == email && storedUser.password == password;
     }
+    return false;
   }
 }

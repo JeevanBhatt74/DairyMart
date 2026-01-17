@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../domain/entities/user_entity.dart';
 import '../../domain/use_cases/login_usecase.dart';
 import '../../domain/use_cases/signup_usecase.dart';
-import '../../data/data_sources/auth_local_data_source.dart';
+import '../../data/data_sources/auth_remote_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
+import '../pages/login_page.dart';
 import '../../../dashboard/presentation/pages/dashboard_page.dart';
+import '../../../../core/utils/snackbar_helper.dart';
 
-// --- DEPENDENCY INJECTION ---
-final authLocalDataSourceProvider = Provider((ref) => AuthLocalDataSource(Hive));
-final authRepositoryProvider = Provider((ref) => AuthRepositoryImpl(ref.read(authLocalDataSourceProvider)));
+// 1. Inject Remote Data Source
+final authRepositoryProvider = Provider((ref) {
+  return AuthRepositoryImpl(ref.read(authRemoteDataSourceProvider));
+});
+
 final signupUseCaseProvider = Provider((ref) => SignupUseCase(ref.read(authRepositoryProvider)));
 final loginUseCaseProvider = Provider((ref) => LoginUseCase(ref.read(authRepositoryProvider)));
 
@@ -22,7 +24,6 @@ final authViewModelProvider = StateNotifierProvider<AuthViewModel, bool>((ref) {
   );
 });
 
-// --- VIEW MODEL ---
 class AuthViewModel extends StateNotifier<bool> {
   final SignupUseCase _signupUseCase;
   final LoginUseCase _loginUseCase;
@@ -30,25 +31,25 @@ class AuthViewModel extends StateNotifier<bool> {
   AuthViewModel(this._signupUseCase, this._loginUseCase) : super(false);
 
   Future<void> registerUser(UserEntity user, BuildContext context) async {
-    state = true; // Loading
+    state = true;
     final result = await _signupUseCase(user);
-    state = false; // Done
+    state = false;
     
     result.fold(
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(failure.message),
-          backgroundColor: Colors.red, // Added red color for errors here too
-        )
-      ),
+      (failure) => SnackBarHelper.showError(context, failure.message),
       (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Registered Successfully! Login now."),
-            backgroundColor: Colors.green, // Green for success
-          )
+        SnackBarHelper.showSuccess(
+          context, 
+          "Account Created Successfully! Please login with your credentials."
         );
-        Navigator.pop(context); // Go back to login
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(builder: (context) => const LoginPage())
+            );
+          }
+        });
       },
     );
   }
@@ -59,18 +60,17 @@ class AuthViewModel extends StateNotifier<bool> {
     state = false;
 
     result.fold(
-      (failure) => ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(failure.message),
-          // FIXED: Use 'backgroundColor' instead of 'style'
-          backgroundColor: Colors.red, 
-        )
-      ),
+      (failure) => SnackBarHelper.showError(context, failure.message),
       (success) {
-        Navigator.pushReplacement(
-          context, 
-          MaterialPageRoute(builder: (context) => const DashboardPage())
-        );
+        SnackBarHelper.showSuccess(context, "Login Successful! Welcome back.");
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (context.mounted) {
+            Navigator.pushReplacement(
+              context, 
+              MaterialPageRoute(builder: (context) => const DashboardPage())
+            );
+          }
+        });
       },
     );
   }
