@@ -44,6 +44,10 @@ dependencies:
   pretty_dio_logger: ^1.4.0
   connectivity_plus: ^6.0.0
 
+  # --- Image & Media Handling ---
+  image_picker: ^1.1.1
+  permission_handler: ^12.0.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
